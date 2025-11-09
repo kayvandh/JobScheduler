@@ -1,11 +1,11 @@
 using Framework.ApiResponse;
-using Framework.Swagger;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
+using JobScheduler.API.Common;
 using JobScheduler.API.Middlewares;
 using JobScheduler.Application;
 using JobScheduler.Infrastructure;
 using JobScheduler.Infrastructure.Extensions;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
 using System.Text;
 
 namespace JobScheduler.API
@@ -52,7 +52,7 @@ namespace JobScheduler.API
                     };
                 });
 
-            SwaggerOption.ConfigureSwagger(builder, "PEP Agent API", "V1");
+            builder.Services.ConfigureSwagger("PEP Agent API", "V1");
 
             var app = builder.Build();
 
