@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Common\Framework\Framework.csproj" />
+    <ProjectReference Include="..\..\Resource\Resource.csproj" />
+    <ProjectReference Include="..\JobScheduler.Domain\JobScheduler.Domain.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Commands\Core\ConditionalFlow\" />
+    <Folder Include="Commands\Core\ExecutionHistory\" />
+    <Folder Include="Commands\Core\Step\" />
+    <Folder Include="Commands\Identity\RolePermission\" />
+    <Folder Include="Commands\Identity\Permission\" />
+    <Folder Include="Commands\Identity\Role\" />
+    <Folder Include="Commands\Identity\User\" />
+    <Folder Include="Queries\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="12.1.0" />
+    <PackageReference Include="FluentValidation.DependencyInjectionExtensions" Version="12.1.0" />
+    <PackageReference Include="MediatR" Version="13.1.0" />
+    <PackageReference Include="MediatR.Extensions.Microsoft.DependencyInjection" Version="11.1.0" />
+  </ItemGroup>
+
+</Project>
