@@ -11,5 +11,10 @@
         {
             return app.UseMiddleware<ExceptionHandlingMiddleware>();
         }
+
+        public static IApplicationBuilder UseLogWithCorrelationId(this IApplicationBuilder app)
+        {
+            return app.UseMiddleware<CorrelationIdMiddleware>();
+        }
     }
 }

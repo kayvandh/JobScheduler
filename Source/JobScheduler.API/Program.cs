@@ -6,6 +6,7 @@ using JobScheduler.Infrastructure;
 using JobScheduler.Infrastructure.Extensions;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
+using Serilog;
 using System.Text;
 
 namespace JobScheduler.API
@@ -16,11 +17,22 @@ namespace JobScheduler.API
         {
             var builder = WebApplication.CreateBuilder(args);
 
+            Log.Logger = new LoggerConfiguration()
+               .ReadFrom.Configuration(builder.Configuration) 
+               .Enrich.FromLogContext()
+               .Enrich.WithProperty("Application", "JobScheduler") 
+               .CreateLogger();
+
+            builder.Host.UseSerilog();
+
+
             builder.Services.AddControllers()
                 .ConfigureApiBehaviorOptions(options =>
                 {
                     options.InvalidModelStateResponseFactory = context => context.ToApiResponse();
                 });
+
+            builder.Services.AddAppSettings(builder.Configuration, out var appSettings);            
 
             builder.Services.AddEndpointsApiExplorer();
 
@@ -54,8 +66,12 @@ namespace JobScheduler.API
 
             builder.Services.ConfigureSwagger("PEP Agent API", "V1");
 
+            var coresPolicyName = "ConfiguredCorsPolicy";
+            builder.Services.AddConfiguredCors(builder.Configuration, coresPolicyName);
+
             var app = builder.Build();
 
+            app.UseLogWithCorrelationId();
             app.ApplyMigrationsAndSeed<Infrastructure.Persistence.JobSchedulerDbContext>();
 
             if (app.Environment.IsDevelopment())
@@ -67,10 +83,7 @@ namespace JobScheduler.API
                 });
             }
 
-            app.UseCors(options =>
-                options.AllowAnyHeader()
-                       .AllowAnyOrigin()
-                       .AllowAnyMethod());
+            app.UseCors(coresPolicyName);
 
             app.UseHttpsRedirection();
             app.UseRouting();

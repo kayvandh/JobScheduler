@@ -1,10 +1,6 @@
 ﻿using Framework.Cache.Interface;
 using Framework.Persistance;
 using Framework.Persistance.Interfaces;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
 using JobScheduler.Application.Common.Interfaces.Identity;
 using JobScheduler.Application.Common.Interfaces.Persistence;
 using JobScheduler.Infrastructure.Cache;
@@ -13,6 +9,11 @@ using JobScheduler.Infrastructure.Identity.Services;
 using JobScheduler.Infrastructure.Persistence;
 using JobScheduler.Infrastructure.Persistence.Repositories;
 using JobScheduler.Infrastructure.Persistence.UnitOfWork;
+using JobScheduler.Infrastructure.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace JobScheduler.Infrastructure
 {
@@ -20,8 +21,13 @@ namespace JobScheduler.Infrastructure
     {
         public static IServiceCollection AddInfrastructure(this IServiceCollection services, IConfiguration configuration)
         {
+            var appSettings = configuration.GetSection(AppSettings.SectionName).Get<AppSettings>();
+
+            if (appSettings == null)
+                throw new InvalidOperationException(Resource.Messages.AppSettingsMissing);
+
             services.AddDbContext<JobSchedulerDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
+                options.UseSqlServer(appSettings.ConnectionStrings.DefaultConnection));
 
             services.AddScoped<DbContext, JobSchedulerDbContext>();
 
@@ -35,12 +41,12 @@ namespace JobScheduler.Infrastructure
             .AddEntityFrameworkStores<JobSchedulerDbContext>()
             .AddDefaultTokenProviders();
 
-            var cacheProvider = configuration.GetSection("CacheSettings:Provider").Value?.ToUpper();
-            if (cacheProvider == "REDIS")
+            
+            if (appSettings.CacheSettings.Provider.ToUpper() == "REDIS")
             {
                 services.AddStackExchangeRedisCache(options =>
                 {
-                    options.Configuration = configuration.GetConnectionString("Redis");
+                    options.Configuration = appSettings.ConnectionStrings.Redis;
                 });
                 services.AddScoped<ICacheService, RedisCacheService>();
             }

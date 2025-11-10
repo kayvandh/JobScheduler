@@ -4,6 +4,8 @@ using JobScheduler.Application.Common.Interfaces.Identity;
 using System.Net;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using JobScheduler.Infrastructure.Settings;
+using Microsoft.Extensions.Options;
 
 namespace JobScheduler.API.Middlewares
 {
@@ -13,20 +15,19 @@ namespace JobScheduler.API.Middlewares
         private readonly HashSet<string> _exactWhitelist;
         private readonly List<Regex> _patternWhitelist;
         private readonly HashSet<string> _ipWhitelist;
+        private readonly AppSettings _appSettings;
 
-        public AuthorizationMiddleware(RequestDelegate next, IConfiguration config)
+        public AuthorizationMiddleware(RequestDelegate next, IOptions<AppSettings> options)
         {
             _next = next;
+            _appSettings = options.Value;
+            _exactWhitelist = _appSettings.Authorization.ExactWhitelist.ToHashSet(StringComparer.OrdinalIgnoreCase);
 
-            _exactWhitelist = config.GetSection("Authorization:ExactWhitelist").Get<HashSet<string>>()
-                              ?? new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-            _patternWhitelist = config.GetSection("Authorization:PatternWhitelist").Get<List<string>>()?
+            _patternWhitelist = _appSettings.Authorization.PatternWhitelist
                 .Select(p => new Regex(p, RegexOptions.IgnoreCase | RegexOptions.Compiled)).ToList()
                 ?? new List<Regex>();
 
-            _ipWhitelist = config.GetSection("Authorization:IPWhiteList").Get<HashSet<string>>() ??
-                            new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            _ipWhitelist = _appSettings.Authorization.IPWhiteList.ToHashSet(StringComparer.OrdinalIgnoreCase);
         }
 
         public async Task InvokeAsync(HttpContext context, IAuthorizationService authorizationService)

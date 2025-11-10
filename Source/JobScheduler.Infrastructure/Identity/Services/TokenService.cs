@@ -1,11 +1,12 @@
 ﻿using Framework.Cache.Interface;
-using Microsoft.AspNetCore.Identity;
-using Microsoft.Extensions.Configuration;
-using Microsoft.IdentityModel.Tokens;
 using JobScheduler.Application.Common.Interfaces.Identity;
 using JobScheduler.Application.Common.Interfaces.Persistence;
 using JobScheduler.Domain.Entities;
 using JobScheduler.Infrastructure.Identity.Entities;
+using JobScheduler.Infrastructure.Settings;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
@@ -15,7 +16,7 @@ namespace JobScheduler.Infrastructure.Identity.Services
     public class TokenService : ITokenService
     {
         private readonly UserManager<ApplicationUser> _userManager;
-        private readonly IConfiguration _config;
+        private readonly AppSettings _appSettings;
         private readonly ICacheService _cacheService;
         private readonly IJobSchedulerUnitOfWork _unitOfWork;
 
@@ -23,12 +24,12 @@ namespace JobScheduler.Infrastructure.Identity.Services
 
         public TokenService(
             UserManager<ApplicationUser> userManager,
-            IConfiguration config,
+            IOptions<AppSettings> options,
             ICacheService cacheService,
             IJobSchedulerUnitOfWork unitOfWork)
         {
             _userManager = userManager;
-            _config = config;
+            _appSettings = options.Value;
             _cacheService = cacheService;
             _unitOfWork = unitOfWork;
         }
@@ -54,13 +55,13 @@ namespace JobScheduler.Infrastructure.Identity.Services
 
             claims.AddRange(userRoles.Select(role => new Claim(ClaimTypes.Role, role)));
 
-            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_config["Jwt:Key"]!));
+            var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_appSettings.Jwt.Key));
             var creds = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
-            var expires = DateTime.UtcNow.AddMinutes(double.Parse(_config["Jwt:AccessTokenExpiryMinutes"] ?? "15"));
+            var expires = DateTime.UtcNow.AddMinutes(_appSettings.Jwt.AccessTokenExpiryMinutes ?? 15);
 
             var jwtToken = new JwtSecurityToken(
-                issuer: _config["Jwt:Issuer"],
-                audience: _config["Jwt:Audience"],
+                issuer: _appSettings.Jwt.Issuer,
+                audience: _appSettings.Jwt.Audience,
                 claims: claims,
                 expires: expires,
                 signingCredentials: creds
@@ -75,7 +76,7 @@ namespace JobScheduler.Infrastructure.Identity.Services
             {
                 Token = Guid.NewGuid().ToString("N"),
                 UserId = user.Id,
-                ExpiresAt = DateTime.UtcNow.AddDays(double.Parse(_config["Jwt:RefreshTokenExpiryDays"] ?? "7"))
+                ExpiresAt = DateTime.UtcNow.AddDays(_appSettings.Jwt.RefreshTokenExpiryDays ?? 7)
             };
 
             await _unitOfWork.RefreshTokens.AddAsync(refreshToken);
@@ -87,7 +88,7 @@ namespace JobScheduler.Infrastructure.Identity.Services
         public ClaimsPrincipal? ValidateAccessToken(string token)
         {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.UTF8.GetBytes(_config["Jwt:Key"]!);
+            var key = Encoding.UTF8.GetBytes(_appSettings.Jwt.Key!);
 
             try
             {
@@ -96,8 +97,8 @@ namespace JobScheduler.Infrastructure.Identity.Services
                     ValidateIssuer = true,
                     ValidateAudience = true,
                     ValidateIssuerSigningKey = true,
-                    ValidIssuer = _config["Jwt:Issuer"],
-                    ValidAudience = _config["Jwt:Audience"],
+                    ValidIssuer = _appSettings.Jwt.Issuer,
+                    ValidAudience = _appSettings.Jwt.Audience,
                     IssuerSigningKey = new SymmetricSecurityKey(key),
                     ClockSkew = TimeSpan.Zero
                 }, out var validatedToken);
@@ -139,7 +140,7 @@ namespace JobScheduler.Infrastructure.Identity.Services
             {
                 Token = Guid.NewGuid().ToString("N"),
                 UserId = userId,
-                ExpiresAt = DateTime.UtcNow.AddDays(double.Parse(_config["Jwt:RefreshTokenExpiryDays"] ?? "7"))
+                ExpiresAt = DateTime.UtcNow.AddDays(_appSettings.Jwt.RefreshTokenExpiryDays ?? 7)
             };
 
             await _unitOfWork.RefreshTokens.AddAsync(newToken);
