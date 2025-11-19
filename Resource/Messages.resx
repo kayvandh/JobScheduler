@@ -117,10 +117,121 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="AccessDenied" xml:space="preserve">
+    <value>Access denied.</value>
+  </data>
+  <data name="AccountLocked" xml:space="preserve">
+    <value>Your account has been locked due to multiple failed login attempts.</value>
+  </data>
+  <data name="ActionSuccessful" xml:space="preserve">
+    <value>{0} action completed successfully.</value>
+  </data>
+  <data name="AlreadyExists" xml:space="preserve">
+    <value>{0} already exists.</value>
+  </data>
+  <data name="ApiCallFailed" xml:space="preserve">
+    <value>API call to {0} failed with status {1}.</value>
+  </data>
   <data name="AppSettingsMissing" xml:space="preserve">
     <value>AppSettings section is missing or invalid in configuration.</value>
   </data>
+  <data name="ConcurrencyError" xml:space="preserve">
+    <value>The record has been modified by another user.</value>
+  </data>
   <data name="CorsSettingsMissing" xml:space="preserve">
     <value>CorsSettings section is missing or invalid in configuration.</value>
+  </data>
+  <data name="CreatedSuccessfully" xml:space="preserve">
+    <value>{0} has been created successfully.</value>
+  </data>
+  <data name="DatabaseError" xml:space="preserve">
+    <value>A database error occurred.</value>
+  </data>
+  <data name="DeletedSuccessfully" xml:space="preserve">
+    <value>{0} has been deleted successfully.</value>
+  </data>
+  <data name="FileSizeExceeded" xml:space="preserve">
+    <value>File size exceeds the maximum limit of {0}.</value>
+  </data>
+  <data name="FileUploaded" xml:space="preserve">
+    <value>File has been uploaded successfully.</value>
+  </data>
+  <data name="FileUploadFailed" xml:space="preserve">
+    <value>File upload failed.</value>
+  </data>
+  <data name="ForbiddenAction" xml:space="preserve">
+    <value>You do not have permission to perform this action.</value>
+  </data>
+  <data name="InvalidFileFormat" xml:space="preserve">
+    <value>Invalid file format. Allowed types: {0}.</value>
+  </data>
+  <data name="InvalidParameters" xml:space="preserve">
+    <value>One or more parameters are invalid.</value>
+  </data>
+  <data name="InvalidValue" xml:space="preserve">
+    <value>The value provided for {0} is invalid.</value>
+  </data>
+  <data name="ItemActivated" xml:space="preserve">
+    <value>{0} was activated successfully.</value>
+  </data>
+  <data name="ItemAdded" xml:space="preserve">
+    <value>{0} was added successfully.</value>
+  </data>
+  <data name="ItemDeactivated" xml:space="preserve">
+    <value>{0} was deactivated successfully.</value>
+  </data>
+  <data name="ItemDeleted" xml:space="preserve">
+    <value>{0} was deleted successfully.</value>
+  </data>
+  <data name="ItemUpdated" xml:space="preserve">
+    <value>{0} was updated successfully.</value>
+  </data>
+  <data name="LoadingData" xml:space="preserve">
+    <value>Loading data...</value>
+  </data>
+  <data name="LoginFailed" xml:space="preserve">
+    <value>Login failed. Invalid username or password.</value>
+  </data>
+  <data name="LoginSuccessful" xml:space="preserve">
+    <value>Login successful.</value>
+  </data>
+  <data name="NoRecordsFound" xml:space="preserve">
+    <value>No records found.</value>
+  </data>
+  <data name="NotFound" xml:space="preserve">
+    <value>{0} not found.</value>
+  </data>
+  <data name="OperationCompleted" xml:space="preserve">
+    <value>Operation completed successfully.</value>
+  </data>
+  <data name="OperationFailed" xml:space="preserve">
+    <value>The operation failed. Please contact the system administrator.</value>
+  </data>
+  <data name="ProcessingRequest" xml:space="preserve">
+    <value>Processing your request...</value>
+  </data>
+  <data name="RecordsFound" xml:space="preserve">
+    <value>{0} record(s) found.</value>
+  </data>
+  <data name="SavedSuccessfully" xml:space="preserve">
+    <value>The data has been saved successfully.</value>
+  </data>
+  <data name="ServiceUnavailable" xml:space="preserve">
+    <value>The service is currently unavailable.</value>
+  </data>
+  <data name="SessionExpired" xml:space="preserve">
+    <value>Your session has expired. Please log in again.</value>
+  </data>
+  <data name="TimeoutError" xml:space="preserve">
+    <value>The operation timed out. Please try again.</value>
+  </data>
+  <data name="UnauthorizedAccess" xml:space="preserve">
+    <value>Unauthorized access.</value>
+  </data>
+  <data name="UnexpectedError" xml:space="preserve">
+    <value>An unexpected error occurred. Please try again later.</value>
+  </data>
+  <data name="UpdatedSuccessfully" xml:space="preserve">
+    <value>{0} has been updated successfully.</value>
   </data>
 </root>

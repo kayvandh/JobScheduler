@@ -2,6 +2,7 @@
 using Framework.FluentResultsAddOn;
 using MediatR;
 using JobScheduler.Application.Common.Interfaces.Identity;
+using Framework.Common;
 
 namespace JobScheduler.Application.Commands.Authentication.RefreshToken
 {
@@ -20,10 +21,10 @@ namespace JobScheduler.Application.Commands.Authentication.RefreshToken
         {
             var refresh = await _tokenService.GetRefreshTokenAsync(request.RefreshToken);
             if (refresh is null || !refresh.IsActive)
-                return Result.Fail(FluentError.Raise(ApplicationErrorCode.BadRequest, "Invalid or expired refresh token."));
+                return Result.Fail(FluentError.Raise(ApplicationErrorCode.BadRequest, Resource.Messages.InvalidValue.FormatWith("Refresh Token")));
 
             var validOrActive = await _authenticationService.IsUserValidOrActiveAsync(refresh.UserId);
-            if (!validOrActive) return Result.Fail(FluentError.Raise(ApplicationErrorCode.NotFound, "User not found."));
+            if (!validOrActive) return Result.Fail(FluentError.Raise(ApplicationErrorCode.NotFound, Resource.Messages.NotFound.FormatWith("User")));
 
             var newToken = await _tokenService.RotateRefreshTokenAsync(refresh.UserId, request.RefreshToken);
             var (access, refreshToken) = await _tokenService.GenerateTokensAsync(refresh.UserId);

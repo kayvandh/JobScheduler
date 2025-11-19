@@ -3,6 +3,7 @@ using FluentResults;
 using Framework.FluentResultsAddOn;
 using MediatR;
 using JobScheduler.Application.Common.Interfaces.Persistence;
+using Framework.Common;
 
 namespace JobScheduler.Application.Commands.Core.Job
 {
@@ -19,17 +20,12 @@ namespace JobScheduler.Application.Commands.Core.Job
 
         public async Task<Result<Guid>> Handle(CreateJobCommand request, CancellationToken cancellationToken)
         {
-            try
-            {
-                var job = mapper.Map<Domain.Entities.Job>(request);
-                await JobSchedulerUnitOfWork.Jops.AddAsync(job);
-                await JobSchedulerUnitOfWork.SaveChangesAsync(cancellationToken);
-                return Result.Ok(job.Id);
-            }
-            catch (Exception ex)
-            {
-                return Result.Fail(FluentError.Raise(ApplicationErrorCode.GeneralError, ex.Message));
-            }
+            var job = mapper.Map<Domain.Entities.Job>(request);
+            await JobSchedulerUnitOfWork.Jops.AddAsync(job);
+            await JobSchedulerUnitOfWork.SaveChangesAsync(cancellationToken);
+
+            return Result.Ok(job.Id)
+                         .WithSuccess(Resource.Messages.CreatedSuccessfully.FormatWith("Job"));
         }
     }
 }

@@ -1,6 +1,7 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using JobScheduler.Domain.Entities;
+using JobScheduler.Infrastructure.Identity.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using JobScheduler.Domain.Entities;
 
 namespace JobScheduler.Infrastructure.Persistence.Configurations
 {
@@ -28,15 +29,28 @@ namespace JobScheduler.Infrastructure.Persistence.Configurations
             builder.Property(j => j.Status)
                 .IsRequired();
 
-            builder.Property(e => e.CreatedBy).IsRequired();
+            builder.Property(e => e.CreatedByUserId).IsRequired();
             builder.Property(e => e.CreatedAt).IsRequired();
-            builder.Property(e => e.UpdatedBy).IsRequired(false);
+            builder.Property(e => e.UpdatedByUserId).IsRequired(false);
             builder.Property(e => e.UpdatedAt).IsRequired(false);
 
             builder.HasMany(j => j.Steps)
                 .WithOne()
                 .HasForeignKey(s => s.JobId)
                 .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Ignore(p => p.CreatedByUser);
+            builder.Ignore(p => p.UpdatedByUser);
+
+            builder.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(j => j.CreatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            builder.HasOne<ApplicationUser>()
+                .WithMany()
+                .HasForeignKey(j => j.UpdatedByUserId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
     }
 }

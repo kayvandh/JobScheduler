@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using JobScheduler.Domain.Entities;
+using JobScheduler.Domain.Interfaces;
 
 namespace JobScheduler.Infrastructure.Identity.Entities
 {
-    public class ApplicationUser : IdentityUser<Guid>
+    public class ApplicationUser : IdentityUser<Guid>, IBaseUser
     {
         public string DisplayName { get; set; } = string.Empty;
         public bool IsActive { get; set; } = true;

@@ -20,11 +20,11 @@ namespace JobScheduler.Application.Commands.Authentication.Login
         {
             var userId = await _authenticationService.ValidateUserAsync(request.Username, request.Password);
             if (userId is null)
-                return Result.Fail(FluentError.Raise(ApplicationErrorCode.NotFound, "Invalid Username or Password"));
+                return Result.Fail(FluentError.Raise(ApplicationErrorCode.NotFound, Resource.Messages.LoginFailed));
 
             var (accessToken, refreshToken) = await _tokenService.GenerateTokensAsync(userId.Value);
 
-            return Result.Ok(new LoginResponse(accessToken, refreshToken));
+            return Result.Ok(new LoginResponse(accessToken, refreshToken)).WithSuccess(Resource.Messages.LoginSuccessful);
         }
     }
 }

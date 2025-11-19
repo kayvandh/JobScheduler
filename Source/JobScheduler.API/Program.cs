@@ -46,8 +46,6 @@ namespace JobScheduler.API
                 })
                 .AddJwtBearer(options =>
                 {
-                    var jwtConfig = builder.Configuration.GetSection("Jwt");
-
                     options.RequireHttpsMetadata = false;
                     options.SaveToken = true;
                     options.TokenValidationParameters = new TokenValidationParameters
@@ -55,10 +53,10 @@ namespace JobScheduler.API
                         ValidateIssuer = true,
                         ValidateAudience = true,
                         ValidateIssuerSigningKey = true,
-                        ValidIssuer = jwtConfig["Issuer"],
-                        ValidAudience = jwtConfig["Audience"],
+                        ValidIssuer = appSettings?.Jwt.Issuer,
+                        ValidAudience = appSettings?.Jwt.Audience,
                         IssuerSigningKey = new SymmetricSecurityKey(
-                            Encoding.UTF8.GetBytes(jwtConfig["Key"]!)
+                            Encoding.UTF8.GetBytes(appSettings?.Jwt.Key!)
                         ),
                         ClockSkew = TimeSpan.FromSeconds(10)
                     };

@@ -1,4 +1,5 @@
-﻿using JobScheduler.Domain.Types;
+﻿using JobScheduler.Domain.Interfaces;
+using JobScheduler.Domain.Types;
 
 namespace JobScheduler.Domain.Entities
 {
@@ -14,6 +15,8 @@ namespace JobScheduler.Domain.Entities
         public string? ErrorMessage { get; set; }
         public Guid? TriggeredByUserId { get; set; }
         public TriggerSource TriggerSource { get; set; }
+
+        public IBaseUser? TriggeredByUser { get; set; }
 
         public ExecutionHistory()
         {

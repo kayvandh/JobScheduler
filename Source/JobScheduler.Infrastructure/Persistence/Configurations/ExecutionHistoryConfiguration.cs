@@ -36,6 +36,8 @@ namespace JobScheduler.Infrastructure.Persistence.Configurations
                 .HasMaxLength(20);
 
             builder.HasIndex(eh => eh.StepId);
+
+            builder.Ignore(p => p.TriggeredByUser);
         }
     }
 }
